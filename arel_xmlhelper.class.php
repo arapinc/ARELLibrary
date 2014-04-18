@@ -528,7 +528,8 @@ class ArelXMLHelper
 	   	    	
     	$out = $object->asXML();
     	$pos = strpos($out, "?>");
-	    echo utf8_encode(trim(substr($out, $pos + 2)));
+	    //echo utf8_encode(trim(substr($out, $pos + 2)));
+	    echo trim(substr($out, $pos + 2));
 	    ob_flush();		
 	}	
 	
