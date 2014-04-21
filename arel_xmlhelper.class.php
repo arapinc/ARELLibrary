@@ -36,7 +36,6 @@ class ArelXMLHelper
 	 */
 	const TRACKING_BARCODE_QR = "Code";
 
-
 	/** @brief Create a basic Location Based 3D Model.
 	 * @param String $id Id of the AREL Object
 	 * @param String $title Title of the AREL Object to be displayed in the popup (if added) as well as list and map
@@ -257,6 +256,7 @@ class ArelXMLHelper
 	 * @param string $trackingXML Path to the tracking xml or identifier of what shall be done (LLA Marker, Barcode / QR code). If nothing is provided, GPS is assumed.
 	 * @param Array $sceneOptions An array providing scene options
 	 */
+	static public $arelPathWithParams;
 	static public function start($resourcesPath = NULL, $arelPath = NULL, $trackingXML = null, $sceneOptions = NULL)
 	{
 		$arelBackUpPath = "";
@@ -276,7 +276,9 @@ class ArelXMLHelper
 		
 		if(isset($arelPath) && !empty($arelPath))
 		{
-			echo "<arel><![CDATA[$arelPath]]></arel>";
+			self::$arelPathWithParams = $arelPath;
+			self::setGETParams();
+			echo "<arel><![CDATA[".self::$arelPathWithParams."]]></arel>";
 		}
 		else
 			echo "<arel><![CDATA[$arelBackUpPath]]></arel>";
@@ -289,6 +291,37 @@ class ArelXMLHelper
 				echo "<sceneoption key=\"$sceneOptionKey\"><![CDATA[$sceneOptionValue]]></sceneoption>";
 			}
 			echo "</sceneoptions>";
+		}
+	}
+
+	// for setting GET variable to arel path 
+	static public function setGETParams()
+	{
+		$dataIssetBool = FALSE;
+		$keys = array_keys($_GET);
+		foreach ($keys as $key) {
+			if ($dataIssetBool == FALSE)
+			{
+				self::setGETparam($key, TRUE);
+				$dataIssetBool = TRUE;
+			}
+			else
+			{
+				self::setGETparam($key);
+			}
+		}
+	}
+	static public function setGETparam($key, $first = FALSE)
+	{
+		if (!empty($_GET[$key]))
+		{
+			if ($first == TRUE) {
+				self::$arelPathWithParams = self::$arelPathWithParams . "?" . $key . "=" . urlencode($_GET[$key]);
+			}
+			else 
+			{
+				self::$arelPathWithParams = self::$arelPathWithParams . "&" . $key . "="  . urlencode($_GET[$key]);
+			}
 		}
 	}
 	
